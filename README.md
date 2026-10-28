@@ -18,6 +18,7 @@ Details page - shows full details, dropdown with only the next valid statuses, d
 
 ```
 project-root/
+├── api/           index.js (vercel serverless function)
 ├── backend/
 │   ├── models/        Application.js, Counter.js
 │   ├── routes/        applications.js
@@ -30,7 +31,9 @@ project-root/
 │       ├── api.js
 │       ├── App.jsx
 │       └── index.css
-└── screenshots/
+├── screenshots/
+├── package.json   (backend deps for vercel)
+└── vercel.json
 ```
 
 ## How to run
@@ -54,6 +57,28 @@ npm run dev
 Then open http://localhost:5173
 
 Note: the `.env` file is already there inside `backend/` with `PORT` and `MONGO_URI`. The database is a free MongoDB Atlas cluster I made only for this exam so its just test data.
+
+The frontend calls `/api/...` and vite forwards it to the backend on port 5000 (see `server.proxy` in `frontend/vite.config.js`), so the backend has to be running too.
+
+## Deploying on Vercel
+
+The whole app (frontend + backend) is deployed as one Vercel project:
+
+- `frontend/` is built with vite and served as a static site
+- `api/index.js` loads the express app from `backend/server.js` and runs it as a serverless function
+- `vercel.json` sends every `/api/*` request to that function and every other route to `index.html` (so refreshing on `/app/:id` works)
+- the root `package.json` has the backend dependencies so vercel installs them for the function
+
+Steps:
+
+1. In MongoDB Atlas go to **Network Access** and add `0.0.0.0/0` (allow from anywhere), because vercel doesn't have fixed IPs.
+2. Push this repo to GitHub.
+3. On [vercel.com](https://vercel.com) click **Add New → Project** and import the repo.
+4. Leave **Root Directory** as `./` (the repo root). The build settings are picked up from `vercel.json`, so nothing else needs changing.
+5. Under **Environment Variables** add `MONGO_URI` with the same connection string as in `backend/.env`.
+6. Click **Deploy**. When it's done open the URL - `/api` should show `Job Tracker API is Running` and `/` shows the app.
+
+Every push to `main` will redeploy automatically after that.
 
 ## APIs
 

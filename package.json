@@ -1,0 +1,14 @@
+{
+  "name": "job-application-tracker",
+  "private": true,
+  "description": "root package used by vercel - installs the backend dependencies for the /api serverless function",
+  "scripts": {
+    "build": "npm run build --prefix frontend"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.9",
+    "express": "^5.3.0",
+    "mongoose": "^9.11.4"
+  }
+}

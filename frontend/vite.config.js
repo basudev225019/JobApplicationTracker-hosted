@@ -3,4 +3,10 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [react()],
+  server: {
+    // send /api calls to the local backend during npm run dev
+    proxy: {
+      '/api': 'http://localhost:5000',
+    },
+  },
 })
